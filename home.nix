@@ -120,7 +120,10 @@ in
         # base-branch defaults to the bare repo's origin/HEAD (per-project,
         # e.g. set via `git --git-dir=.bare symbolic-ref refs/remotes/origin/HEAD
         # refs/remotes/origin/develop`); target-path defaults to
-        # <project-root>/<branch>.
+        # <project-root>/<branch>. If the target path is already a registered
+        # worktree of this repo, wtnew skips creation and just (re)attaches a
+        # herdr session to it - so the same command works for both making a
+        # new worktree and opening an existing one.
         wtnew() {
           local branch="$1" base="$2" target="$3"
           if [[ -z "$branch" ]]; then
@@ -144,6 +147,12 @@ in
 
           target="''${target:-$dir/$branch}"
           if [[ -e "$target" ]]; then
+            if git --git-dir="$bare" worktree list --porcelain | grep -qx "worktree $target"; then
+              if command -v herdr >/dev/null 2>&1; then
+                herdr worktree open --cwd "$dir" --path "$target" >/dev/null 2>&1
+              fi
+              return 0
+            fi
             echo "wtnew: $target already exists" >&2
             return 1
           fi

@@ -247,6 +247,7 @@ wtnew <branch> [base-branch] [target-path]
 - `[target-path]`: defaults to `<project-root>/<branch>`; pass an explicit path to override.
 - If `<branch>` has no upstream set (common right after the initial `git clone --bare`, which mirrors `origin`'s branches straight into `refs/heads` with no tracking info, and doesn't configure `remote.origin.fetch` either), `wtnew` configures `remote.origin.fetch`, fetches that one branch from `origin` into `refs/remotes/origin/<branch>`, and backfills the upstream with `git branch --set-upstream-to`. Silently skips if `origin` doesn't have the branch (e.g. a local-only branch).
 - Attaches a herdr session via `herdr worktree open` afterward, if herdr is installed — see [herdr-cheatsheet.md](herdr-cheatsheet.md#worktrees).
+- If `[target-path]` (or the default `<project-root>/<branch>`) already exists and is a worktree registered against the bare repo (checked via `git worktree list`), `wtnew` skips creation entirely and just (re)attaches a herdr session to it — so the same command doubles as "open an existing worktree." A path that exists but isn't a registered worktree of this repo still errors out, to avoid clobbering an unrelated directory.
 
 ---
 
