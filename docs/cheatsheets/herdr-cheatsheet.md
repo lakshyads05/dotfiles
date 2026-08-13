@@ -7,6 +7,7 @@ related:
   - "[[ghostty-cheatsheet]]"
   - "[[claude-code-cheatsheet]]"
   - "[[cursor-cli-cheatsheet]]"
+  - "[[pi-cheatsheet]]"
   - "[[git-cheatsheet]]"
 ---
 

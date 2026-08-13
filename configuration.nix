@@ -49,6 +49,7 @@
     taps = [
       "hashicorp/tap"
       "stripe/stripe-cli"
+      "kunchenguid/tap"
     ];
 
     # CLI tools that exist in nixpkgs (ripgrep, fd, bat, eza, zoxide, fzf,
@@ -96,6 +97,7 @@
       "linearmouse"
       "opensuperwhisper"
       "obsidian"
+      "kunchenguid/tap/baby-menu"  # agent-editable menu bar (https://github.com/kunchenguid/baby-menu)
       # API testing
       "granola"
       "postman"

@@ -267,7 +267,7 @@ This repo is meant to be forked and personalized. The files worth editing:
 | `home/.config/nvim/` | Neovim config (lazy.nvim plugin specs under `lua/plugins/`). Edit-in-place, no rebuild needed. |
 | `home/.config/herdr/config.toml` | herdr (terminal agent multiplexer) keybindings. Edit-in-place, no rebuild needed. |
 | `home/.config/linearmouse/linearmouse.json` | Mouse settings (side buttons, scroll direction, acceleration). Edit via the LinearMouse GUI; changes write back to the file automatically. |
-| `home/AGENTS.md` | Shared agent instructions, symlinked into Claude Code, Codex, opencode, and Cursor. |
+| `home/AGENTS.md` | Shared agent instructions, symlinked into Claude Code, Codex, opencode, Pi, and Cursor. |
 
 After any changes, commit them to your dotfiles repo. Other machines pick up changes with `git pull && ./rebuild.sh` (or `./bootstrap.sh` on a machine that hasn't been bootstrapped yet).
 
@@ -440,6 +440,7 @@ Full command references for the tools that get the most daily use. These live in
 - **[Docker cheat sheet](docs/cheatsheets/docker-cheatsheet.md)**: images, containers, volumes, networks, Docker Compose, Dockerfile basics, disk cleanup, troubleshooting
 - **[Claude Code cheat sheet](docs/cheatsheets/claude-code-cheatsheet.md)**: CLI flags, slash commands, keyboard shortcuts, permission modes, CLAUDE.md, hooks, MCP, subagents, models and cost
 - **[Cursor CLI cheat sheet](docs/cheatsheets/cursor-cli-cheatsheet.md)**: agent modes (Agent/Plan/Ask), slash commands, cloud handoff, MCP integration, rules and skills, subagents
+- **[Pi cheat sheet](docs/cheatsheets/pi-cheatsheet.md)**: minimal coding agent harness — CLI flags, slash commands, AGENTS.md/skills, packages and extensions
 - **[Herdr cheat sheet](docs/cheatsheets/herdr-cheatsheet.md)**: session/workspace/tab/pane model, tmux-style keybindings, worktrees, agent integrations, socket API for scripting agents
 
 Each is written as a skimmable reference, not a tutorial. Use them when you need to look something up.
@@ -464,7 +465,7 @@ dotfiles/
 ├── home.nix                    # home-manager: CLI packages, zsh/starship, dotfile symlinks
 ├── Brewfile                    # RETIRED — pointer stub, superseded by configuration.nix
 ├── home/                       # edit-in-place source for home-manager's mkOutOfStoreSymlink files
-│   ├── AGENTS.md                # shared agent instructions (Claude, Codex, opencode, Cursor)
+│   ├── AGENTS.md                # shared agent instructions (Claude, Codex, opencode, Pi, Cursor)
 │   ├── .tool-versions            # asdf runtime versions (Node, Python, Go, Java)
 │   ├── .claude/
 │   │   └── settings.json        # Claude Code settings (theme, statusline)

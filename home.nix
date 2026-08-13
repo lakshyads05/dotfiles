@@ -28,6 +28,7 @@ in
     git
     gh
     opencode
+    pi-coding-agent  # binary: pi — minimal coding agent harness (https://pi.dev)
     zsh-completions
     # Fonts — Hack is the primary system font (Ghostty/WezTerm); JetBrains
     # Mono and Fira Code stay installed as alternatives. See README.md
@@ -315,6 +316,8 @@ in
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/AGENTS.md";
   home.file.".config/opencode/AGENTS.md".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/AGENTS.md";
+  home.file.".pi/agent/AGENTS.md".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/AGENTS.md";
 
   home.file.".claude/settings.json".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.claude/settings.json";
@@ -323,7 +326,7 @@ in
 
   # Skills shared across agent CLIs, all reading the same open SKILL.md
   # format (frontmatter: name + description). ~/.agents/skills is the canonical
-  # registry; Codex, Cursor, and opencode scan it natively.
+  # registry; Codex, Cursor, opencode, and pi scan it natively.
   # Claude Code is the one exception: it only reads its own ~/.claude/skills
   # folder, so anything meant for Claude Code needs an explicit symlink
   # there too. See docs/inventory.md#shared-agent-skills for the full model.

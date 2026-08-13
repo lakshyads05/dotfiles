@@ -44,6 +44,7 @@ All declared in `configuration.nix`'s `homebrew.casks` (applied via `darwin-rebu
 | Granola | `configuration.nix` (homebrew.casks) | Productivity | AI-powered notepad for meetings |
 | Postman | `configuration.nix` (homebrew.casks) | API Testing | REST client |
 | Whimsical | `configuration.nix` (homebrew.casks) | Productivity | Collaboration and diagramming tool |
+| Baby Menu | `configuration.nix` (homebrew.casks: `kunchenguid/tap/baby-menu`) | Productivity | Agent-editable macOS menu bar — ask Claude/Codex (or a custom ACP agent) to add widgets; state under `~/.baby-menu` |
 | Claude (desktop) | `configuration.nix` (homebrew.casks: `claude`) | AI | Anthropic Claude desktop app |
 | Codex (desktop) | `configuration.nix` (homebrew.casks: `codex-app`) | AI | OpenAI Codex desktop app for managing coding agents; global instructions symlinked from `home/AGENTS.md` to `~/.codex/AGENTS.md` |
 | Claude Code | `configuration.nix` (homebrew.casks: `claude-code`) | AI / CLI | Global config (`CLAUDE.md` from `home/AGENTS.md`, `settings.json`, `statusline-command.sh`) symlinked via home-manager into `~/.claude/`. Updates via Homebrew's `onActivation.autoUpdate`, not a native installer. |
@@ -92,11 +93,12 @@ Installed via `home.nix`'s `home.packages` (Nix), unless noted otherwise.
 | `claude` | `configuration.nix` (homebrew.casks: `claude-code`) | Anthropic Claude Code CLI |
 | `codex` | `configuration.nix` (homebrew.casks: `codex`) | OpenAI Codex CLI — coding agent in terminal |
 | `opencode` | `home.nix` (home.packages) | AI coding agent, built for the terminal |
+| `pi` | `home.nix` (home.packages: `pi-coding-agent`) | Minimal coding agent harness ([pi.dev](https://pi.dev)); global instructions at `~/.pi/agent/AGENTS.md` |
 | `agent` / `cursor-agent` | Installed independently by Cursor (not via this repo) | Cursor's agent CLI, under `~/.local/bin` — aliased to `aa` in `home.nix`'s `programs.zsh.shellAliases` |
 
 #### Shared agent skills
 
-Claude Code, Codex CLI, Cursor, and OpenCode all read the same open `SKILL.md` format (YAML frontmatter with `name`/`description`, then markdown instructions). Codex, Cursor, and OpenCode scan `~/.agents/skills` natively; Claude Code only reads its own `~/.claude/skills`, so `home.nix` symlinks each skill into both directories from one canonical copy in this repo's `home/skills/<name>/`.
+Claude Code, Codex CLI, Cursor, OpenCode, and Pi all read the same open `SKILL.md` format (YAML frontmatter with `name`/`description`, then markdown instructions). Codex, Cursor, OpenCode, and Pi scan `~/.agents/skills` natively; Claude Code only reads its own `~/.claude/skills`, so `home.nix` symlinks each skill into both directories from one canonical copy in this repo's `home/skills/<name>/`.
 
 | Skill | Canonical source | Symlinked into |
 |-------|-------------------|-----------------|

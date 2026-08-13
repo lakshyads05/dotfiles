@@ -34,6 +34,7 @@ Every cheat sheet here has frontmatter `tag:`/`related:` for Obsidian's tag pane
 
 - [[claude-code-cheatsheet]] — Claude Code CLI: flags, slash commands, hooks, MCP, subagents
 - [[cursor-cli-cheatsheet]] — Cursor CLI: Agent/Plan/Ask modes, Cloud Handoff, MCP, subagents
+- [[pi-cheatsheet]] — Pi coding agent: minimal harness, packages/extensions, AGENTS.md, skills
 - [[herdr-cheatsheet]] — herdr agent multiplexer: sessions/workspaces/tabs/panes, tmux-style keybindings, socket API for scripting agents
 
 ## Containers
