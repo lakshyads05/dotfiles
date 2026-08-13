@@ -89,7 +89,7 @@ in
       cc = "claude";
       ccc = "claude --dangerously-skip-permissions";
       co = "codex";
-      coo = "codex -a never -s workspace-write";
+      coo = "codex --sandbox danger-full-access --ask-for-approval never";
       aa = "agent"; 
       aaa = "agent -f"; 
     };
