@@ -1,0 +1,8 @@
+[
+  {
+    "name": "cursor-cli",
+    "label": "cursor-cli",
+    "command": "cursor-cli",
+    "launchCommand": "agent"
+  }
+]

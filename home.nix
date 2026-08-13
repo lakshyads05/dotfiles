@@ -370,4 +370,37 @@ in
       $DRY_RUN_CMD mv "$TARGET" "$BACKUP"
     fi
   '';
+
+  # Baby Menu: extensions + prefs + agents live in this repo; SQLite DB and
+  # caches stay machine-local under ~/.baby-menu/. Upstream supports
+  # ~/.baby-menu/extensions as a managed symlink (including home-manager
+  # mkOutOfStoreSymlink) — agent edits write through to the repo target.
+  home.file.".baby-menu/extensions".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.baby-menu/extensions";
+  home.file.".baby-menu/preferences.json".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.baby-menu/preferences.json";
+  home.file.".baby-menu/agents.json".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.baby-menu/agents.json";
+
+  home.activation.backupBabyMenuConfig = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
+    stamp=$(date +%Y%m%d-%H%M%S)
+    for TARGET in \
+      "$HOME/.baby-menu/extensions" \
+      "$HOME/.baby-menu/preferences.json" \
+      "$HOME/.baby-menu/agents.json"
+    do
+      if [[ -L "$TARGET" ]]; then
+        # Keep home-manager's nix-store chain; drop any direct/foreign symlink
+        # (e.g. a one-off ln -s into this repo before the first rebuild).
+        link=$(readlink "$TARGET")
+        case "$link" in
+          /nix/store/*) ;;
+          *) $DRY_RUN_CMD rm "$TARGET" ;;
+        esac
+      elif [[ -e "$TARGET" ]]; then
+        BACKUP="$TARGET.backup.$stamp"
+        $DRY_RUN_CMD mv "$TARGET" "$BACKUP"
+      fi
+    done
+  '';
 }

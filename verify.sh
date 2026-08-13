@@ -226,6 +226,9 @@ check_resolves_to_repo "$HOME/.config/ghostty/config"               "~/.config/g
 check_resolves_to_repo "$HOME/.config/nvim/init.lua"                "~/.config/nvim/init.lua"
 check_resolves_to_repo "$HOME/.config/linearmouse/linearmouse.json" "~/.config/linearmouse/linearmouse.json"
 check_resolves_to_repo "$HOME/.config/herdr/config.toml"            "~/.config/herdr/config.toml"
+check_resolves_to_repo "$HOME/.baby-menu/extensions"                "~/.baby-menu/extensions"
+check_resolves_to_repo "$HOME/.baby-menu/preferences.json"          "~/.baby-menu/preferences.json"
+check_resolves_to_repo "$HOME/.baby-menu/agents.json"               "~/.baby-menu/agents.json"
 check_resolves_to_repo_optional "$HOME/Documents/workspace/my-matrix/a-utils/cheatsheets" "~/Documents/workspace/my-matrix/a-utils/cheatsheets (optional: external workspace)"
 check_resolves_to_repo "$HOME/.tool-versions"                       "~/.tool-versions (-> home/.tool-versions)"
 check_resolves_to_repo "$HOME/.claude/CLAUDE.md"                    "~/.claude/CLAUDE.md (-> home/AGENTS.md)"
@@ -258,6 +261,9 @@ check_contains "$GHOSTTY_CFG" "term = xterm-256color" "ghostty-config: term=xter
 check_contains "$GHOSTTY_CFG" "theme"                 "ghostty-config: theme set"
 
 check_json "$HOME/.config/linearmouse/linearmouse.json" "linearmouse.json"
+check_json "$HOME/.baby-menu/preferences.json" "baby-menu preferences.json"
+check_json "$HOME/.baby-menu/agents.json" "baby-menu agents.json"
+check_nonempty "$HOME/.baby-menu/extensions/layout.tsx" "~/.baby-menu/extensions/layout.tsx"
 
 check_contains "$HOME/.config/git/config" 'pager = "delta"' "~/.config/git/config: delta pager configured (home-manager)"
 

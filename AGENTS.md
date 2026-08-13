@@ -11,7 +11,7 @@ Before answering any question about this Mac dev setup, shell tools, CLI tools, 
 | What is installed / how | `docs/inventory.md` |
 | How-to / CLI reference | `docs/cheatsheets/` (see index below) |
 | Bootstrap / wiring | `flake.nix`, `configuration.nix`, `home.nix`, `bootstrap.sh`, `rebuild.sh`, `verify.sh` |
-| Live config / "what is set?" | `home/.config/{wezterm,ghostty,nvim,herdr,linearmouse}/`, `home.nix`'s `programs.starship`/`programs.zsh` blocks |
+| Live config / "what is set?" | `home/.config/{wezterm,ghostty,nvim,herdr,linearmouse}/`, `home/.baby-menu/`, `home.nix`'s `programs.starship`/`programs.zsh` blocks |
 | Setup walkthrough / daily commands | `README.md` |
 
 ### docs/ index

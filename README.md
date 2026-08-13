@@ -229,7 +229,7 @@ The defaults are chosen carefully, but if you want to customize:
 - **Starship prompt:** edit `home.nix`'s `programs.starship.settings`, then run `./rebuild.sh`.
 - **Shell aliases:** edit `home.nix`'s `programs.zsh.shellAliases`, then run `./rebuild.sh`.
 
-`home/.config/{wezterm,ghostty,nvim,herdr}/` files are edit-in-place — home-manager symlinks them directly into place (`mkOutOfStoreSymlink`), so editing them takes effect immediately, no rebuild needed. Everything else (packages, shell aliases, Starship settings) requires `./rebuild.sh` to apply.
+`home/.config/{wezterm,ghostty,nvim,herdr}/` and `home/.baby-menu/` files are edit-in-place — home-manager symlinks them directly into place (`mkOutOfStoreSymlink`), so editing them takes effect immediately, no rebuild needed. Everything else (packages, shell aliases, Starship settings) requires `./rebuild.sh` to apply.
 
 <p align="right"><a href="#table-of-contents">↑ Back to top</a></p>
 
@@ -267,6 +267,7 @@ This repo is meant to be forked and personalized. The files worth editing:
 | `home/.config/nvim/` | Neovim config (lazy.nvim plugin specs under `lua/plugins/`). Edit-in-place, no rebuild needed. |
 | `home/.config/herdr/config.toml` | herdr (terminal agent multiplexer) keybindings. Edit-in-place, no rebuild needed. |
 | `home/.config/linearmouse/linearmouse.json` | Mouse settings (side buttons, scroll direction, acceleration). Edit via the LinearMouse GUI; changes write back to the file automatically. |
+| `home/.baby-menu/` | Baby Menu extensions, preferences, and custom agents. Agent edits write through the symlink; DB/caches stay under `~/.baby-menu/` only. |
 | `home/AGENTS.md` | Shared agent instructions, symlinked into Claude Code, Codex, opencode, Pi, and Cursor. |
 
 After any changes, commit them to your dotfiles repo. Other machines pick up changes with `git pull && ./rebuild.sh` (or `./bootstrap.sh` on a machine that hasn't been bootstrapped yet).
@@ -469,6 +470,7 @@ dotfiles/
 │   ├── .tool-versions            # asdf runtime versions (Node, Python, Go, Java)
 │   ├── .claude/
 │   │   └── settings.json        # Claude Code settings (theme, statusline)
+│   ├── .baby-menu/              # Baby Menu extensions + preferences + agents.json
 │   └── .config/
 │       ├── wezterm/wezterm.lua
 │       ├── ghostty/config
