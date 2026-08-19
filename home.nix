@@ -90,8 +90,8 @@ in
       ccc = "claude --dangerously-skip-permissions";
       co = "codex";
       coo = "codex --sandbox danger-full-access --ask-for-approval never";
-      aa = "agent"; 
-      aaa = "agent -f"; 
+      aa = "cursor-agent"; 
+      aaa = "cursor-agent -f --trust"; 
     };
 
     initContent = lib.mkMerge [
