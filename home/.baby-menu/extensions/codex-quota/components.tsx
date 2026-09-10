@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
-import { Badge, Progress, Skeleton, StatusDot } from "@babymenu/ui";
-import { fetchQuota, findWeeklyWindow, getCachedQuota, subscribeQuota, type CodexQuotaSnapshot, type QuotaResult } from "./store";
+import { Badge, Button, Input, Progress, Skeleton, StatusDot } from "@babymenu/ui";
+import {
+  fetchQuota,
+  findFiveHourWindow,
+  findWeeklyWindow,
+  getCachedQuota,
+  getResetCreditExpiry,
+  setResetCreditExpiry,
+  subscribeQuota,
+  type CodexQuotaSnapshot,
+  type QuotaResult,
+} from "./store";
 
 function toneForRemaining(percentRemaining: number): "live" | "warn" | "danger" {
   if (percentRemaining <= 10) return "danger";
@@ -75,6 +85,107 @@ function RingChart({ percentRemaining, tone, size = 44 }: { percentRemaining: nu
   );
 }
 
+function SessionTile({ percentUsed, resetText, resetAt }: { percentUsed: number; resetText?: string; resetAt?: string }) {
+  const percentRemaining = Math.round(100 - percentUsed);
+  const tone = toneForRemaining(percentRemaining);
+  const reset = resetText || formatResetAt(resetAt);
+  return (
+    <div className="flex flex-1 flex-col gap-1.5 rounded-sm bg-elevated px-2.5 py-2">
+      <span className="text-xxs uppercase tracking-caps text-ink-label">session · 5h</span>
+      <div className="flex items-center gap-2">
+        <RingChart percentRemaining={percentRemaining} tone={tone} size={36} />
+        <div className="flex flex-1 flex-col gap-1">
+          <Progress value={Math.round(percentUsed)} tone={tone} />
+          <span className={`text-xs ${toneTextClass[tone]}`}>
+            {Math.round(percentUsed)}
+            <span className="ml-0.5 text-ink-soft">% used</span>
+          </span>
+        </div>
+      </div>
+      {reset ? <span className="text-xxs text-ink-soft">{reset}</span> : null}
+    </div>
+  );
+}
+
+function daysUntil(dateStr: string): number | undefined {
+  const ms = Date.parse(dateStr);
+  if (Number.isNaN(ms)) return undefined;
+  return Math.ceil((ms - Date.now()) / (1000 * 60 * 60 * 24));
+}
+
+function formatExpiryDate(dateStr: string): string {
+  const ms = Date.parse(dateStr);
+  if (Number.isNaN(ms)) return dateStr;
+  return new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(new Date(ms));
+}
+
+function FreeResetTile({
+  availableCount,
+  expiresAt,
+  onSetExpiry,
+}: {
+  availableCount: number;
+  expiresAt?: string;
+  onSetExpiry: (expiresAt: string | undefined) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(expiresAt ?? "");
+
+  useEffect(() => {
+    setDraft(expiresAt ?? "");
+  }, [expiresAt]);
+
+  const remainingDays = expiresAt ? daysUntil(expiresAt) : undefined;
+  const expiringSoon = remainingDays !== undefined && remainingDays <= 7;
+
+  if (editing) {
+    return (
+      <div className="flex flex-1 flex-col gap-1.5 rounded-sm bg-elevated px-2.5 py-2">
+        <span className="text-xxs uppercase tracking-caps text-ink-label">free reset · expiry</span>
+        <div className="flex items-center gap-1.5">
+          <Input
+            type="date"
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            className="text-xxs"
+          />
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Button
+            size="sm"
+            variant="primary"
+            onClick={() => {
+              onSetExpiry(draft || undefined);
+              setEditing(false);
+            }}
+          >
+            save
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => setEditing(false)}>
+            cancel
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-1 flex-col gap-1.5 rounded-sm bg-elevated px-2.5 py-2">
+      <span className="text-xxs uppercase tracking-caps text-ink-label">free reset</span>
+      <span className="text-lg font-light tracking-value text-ink-strong">{availableCount}</span>
+      <button
+        type="button"
+        onClick={() => setEditing(true)}
+        className={`text-left text-xxs ${expiringSoon ? "text-signal-warn" : "text-ink-soft underline decoration-dotted"}`}
+      >
+        {expiresAt
+          ? `expires ${formatExpiryDate(expiresAt)}${remainingDays !== undefined ? ` (${remainingDays}d)` : ""}`
+          : "set expiry"}
+      </button>
+    </div>
+  );
+}
+
 function CreditsRow({ credits }: { credits: NonNullable<CodexQuotaSnapshot["credits"]> }) {
   if (credits.unlimited) {
     return (
@@ -98,12 +209,22 @@ function CreditsRow({ credits }: { credits: NonNullable<CodexQuotaSnapshot["cred
 
 export function CodexQuotaView() {
   const [result, setResult] = useState<QuotaResult | undefined>(getCachedQuota());
+  const [resetExpiry, setResetExpiryState] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const unsubscribe = subscribeQuota(() => setResult(getCachedQuota()));
     if (!getCachedQuota()) void fetchQuota();
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    void getResetCreditExpiry().then(setResetExpiryState);
+  }, []);
+
+  function handleSetExpiry(expiresAt: string | undefined) {
+    setResetExpiryState(expiresAt);
+    void setResetCreditExpiry(expiresAt);
+  }
 
   if (!result) {
     return (
@@ -125,7 +246,9 @@ export function CodexQuotaView() {
   }
 
   const weekly = findWeeklyWindow(result.data);
+  const fiveHour = findFiveHourWindow(result.data);
   const credits = result.data.credits;
+  const availableResets = result.data.resetCredits?.availableCount;
 
   if ((!weekly || weekly.percentUsed === undefined) && !credits) {
     return (
@@ -164,6 +287,16 @@ export function CodexQuotaView() {
               : "reset time unavailable"}
           </span>
         </>
+      ) : null}
+      {(fiveHour && fiveHour.percentUsed !== undefined) || availableResets ? (
+        <div className="flex gap-2">
+          {fiveHour && fiveHour.percentUsed !== undefined ? (
+            <SessionTile percentUsed={fiveHour.percentUsed} resetText={fiveHour.resetText} resetAt={fiveHour.resetAt} />
+          ) : null}
+          {availableResets ? (
+            <FreeResetTile availableCount={availableResets} expiresAt={resetExpiry} onSetExpiry={handleSetExpiry} />
+          ) : null}
+        </div>
       ) : null}
       {credits ? <CreditsRow credits={credits} /> : null}
     </div>

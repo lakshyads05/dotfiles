@@ -24,6 +24,9 @@ type CodexQuotaSnapshot = {
     hasCredits?: boolean;
     unlimited?: boolean;
   };
+  resetCredits?: {
+    availableCount?: number;
+  };
   refreshedAt: string;
   stale: boolean;
 };
@@ -127,6 +130,16 @@ function buildWindowsFromSeconds(rateLimit: Record<string, unknown> | undefined)
   return windows;
 }
 
+function buildResetCredits(
+  resetCredits: Record<string, unknown> | null | undefined,
+): CodexQuotaSnapshot["resetCredits"] {
+  if (!resetCredits) return undefined;
+  const availableCount =
+    typeof resetCredits.available_count === "number" ? resetCredits.available_count : undefined;
+  if (availableCount === undefined) return undefined;
+  return { availableCount };
+}
+
 function normalizeOAuthUsage(body: Record<string, unknown>): CodexQuotaSnapshot {
   const rateLimit = body.rate_limit as Record<string, unknown> | undefined;
   const credits = body.credits as Record<string, unknown> | undefined;
@@ -147,6 +160,9 @@ function normalizeOAuthUsage(body: Record<string, unknown>): CodexQuotaSnapshot 
           unlimited: typeof credits.unlimited === "boolean" ? credits.unlimited : undefined,
         }
       : undefined,
+    resetCredits: buildResetCredits(
+      body.rate_limit_reset_credits as Record<string, unknown> | null | undefined,
+    ),
     refreshedAt: new Date().toISOString(),
     stale: false,
   };

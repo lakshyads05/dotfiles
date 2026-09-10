@@ -16,6 +16,9 @@ export type CodexQuotaSnapshot = {
     hasCredits?: boolean;
     unlimited?: boolean;
   };
+  resetCredits?: {
+    availableCount?: number;
+  };
   refreshedAt: string;
   stale: boolean;
 };
@@ -56,4 +59,34 @@ export function fetchQuota(): Promise<QuotaResult> {
 
 export function findWeeklyWindow(snapshot: CodexQuotaSnapshot): QuotaWindow | undefined {
   return snapshot.windows.find((w) => w.id === "weekly");
+}
+
+export function findFiveHourWindow(snapshot: CodexQuotaSnapshot): QuotaWindow | undefined {
+  return snapshot.windows.find((w) => w.id === "five_hour");
+}
+
+// The free-reset-credit expiry is user-known (from OpenAI's own notices), not part of the
+// usage API response, so it is tracked locally rather than fetched.
+const RESET_EXPIRY_TABLE = "codex_quota_reset_credit";
+
+async function ensureResetExpiryTable(): Promise<void> {
+  await window.babyMenu!.db.exec(
+    `CREATE TABLE IF NOT EXISTS ${RESET_EXPIRY_TABLE} (id INTEGER PRIMARY KEY CHECK (id = 1), expires_at TEXT)`,
+  );
+}
+
+export async function getResetCreditExpiry(): Promise<string | undefined> {
+  await ensureResetExpiryTable();
+  const row = await window.babyMenu!.db.get<{ expires_at: string | null }>(
+    `SELECT expires_at FROM ${RESET_EXPIRY_TABLE} WHERE id = 1`,
+  );
+  return row?.expires_at ?? undefined;
+}
+
+export async function setResetCreditExpiry(expiresAt: string | undefined): Promise<void> {
+  await ensureResetExpiryTable();
+  await window.babyMenu!.db.run(
+    `INSERT INTO ${RESET_EXPIRY_TABLE} (id, expires_at) VALUES (1, ?) ON CONFLICT(id) DO UPDATE SET expires_at = excluded.expires_at`,
+    [expiresAt ?? null],
+  );
 }
